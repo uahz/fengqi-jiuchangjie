@@ -1,6 +1,7 @@
-/* 风起旧厂街 · Android PWA service worker（cache-first，离线可玩） */
-const CACHE = "gq-mobile-v3";
-const ASSETS = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png"];
+/* 风起旧厂街 · PWA service worker（cache-first，离线可玩） */
+const CACHE = "gq-cine-v1";
+const IMGS = ["market","station","jinhan","tower","rain","cell","dawn","hero"].map(n=>"./img/"+n+".webp");
+const ASSETS = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png", ...IMGS];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(ASSETS)).then(() => self.skipWaiting()));

@@ -1,34 +1,45 @@
 # 🎣 风起旧厂街 · 高启强
 
 > 2000 年，京海市，旧厂街菜市场。你还是一个每天凌晨三点起来进鱼的鱼贩子。
-> **四端发布：网页 / Windows / Android APK / Android PWA** · 9 结局 · 13 成就 · Q版立绘 + 写实绘画风场景
+> **四端发布：网页 / Windows / Android APK / Android PWA** · 9 结局 · 13 成就 · 照片级写实场景
 
-![标题界面](_shots/gao-1-title.png)
+![标题界面](_shots/01-网页版-标题.png)
+
+## 🎬 V2.5 · 写实电影感
+
+V2.5 把整套视觉换成**暗夜电影感**：低照度写真背景、暖琥珀实用光与冷青阴影对撞、浅景深、胶片颗粒、湿面反光，配合暗夜玻璃拟态面板与暖金强调色。三端共用同一套视觉语言。
+
+| 对话与抉择 | 雨夜街道 |
+|---|---|
+| ![对话与抉择](_shots/02-网页版-对话与抉择.png) | ![雨夜](_shots/04-网页版-雨夜.png) |
 
 ## ⬇️ 下载
 
 ### 📱 Android APK（推荐）
-**[下载 风起旧厂街-v2.4.apk](../../releases/latest)** —— 约 1 MB，传到手机点击安装即玩
-> 包名 `com.uahz.fengqi` · 最低 Android 5.0 · 竖屏 · 已签名（debug 证书，可直接安装体验）
+**[下载 fengqi-jiuchangjie-v2.5.apk](../../releases/latest)** —— **约 0.8 MB**，传到手机点击安装即玩
+> 包名 `com.uahz.fengqi` · 最低 Android 5.0 · 竖屏 · 已签名（debug 证书，与 v2.4 同签名，可覆盖安装）
 
 ### 🖥 Windows 桌面版
-**[下载 FengqiJiuchangjie.exe](../../releases/latest)** —— 约 16 MB，免安装双击即玩
+**[下载 FengqiJiuchangjie.exe](../../releases/latest)** —— 约 15 MB，免安装双击即玩
 > 需 Windows 10/11（系统自带 WebView2）。存档位于 `%APPDATA%\FengqiJiuchangjie`。
 
 ### 🌐 在线试玩（无需下载）
-- **网页版（吉卜力风格）**：[点击即玩](https://uahz.github.io/fengqi-jiuchangjie/fengqi-jiuchangjie.html)
-- **安卓版 PWA（液态玻璃）**：[点击进入](https://uahz.github.io/fengqi-jiuchangjie/mobile/)，安卓 Chrome 菜单「添加到主屏幕」即作为独立 App 安装，支持离线
+- **网页版（写实电影感）**：[点击即玩](https://uahz.github.io/fengqi-jiuchangjie/fengqi-jiuchangjie.html)
+- **安卓版 PWA**：[点击进入](https://uahz.github.io/fengqi-jiuchangjie/mobile/)，安卓 Chrome 菜单「添加到主屏幕」即作为独立 App 安装，支持离线
 
-## 🎨 三套 UI，同一段人生
+## 🎨 七个写实场景
 
-| 端 | 风格 | 说明 |
+| 旧厂街鱼市（开篇） | 白金瀚夜总会 | 风浪回合 |
 |---|---|---|
-| 网页 / Windows | **吉卜力风格** | 奶油底 × 鼠尾草绿，云朵漂浮、水彩纹理、圆润卡片、微风感动效 |
-| Android APK / PWA | **Luma 暗色 × 液态玻璃** | 近黑底 + 玻璃拟态面板（模糊增饱和 + 高光镜圈）× 底部悬浮玻璃导航 |
+| ![开篇](_shots/02-网页版-对话与抉择.png) | ![夜总会](_shots/03-网页版-谋略卡选项.png) | ![风浪](_shots/05-网页版-风浪回合.png) |
 
-**对话演出**：14 位角色手绘 Q 版立绘 + **写实绘画风场景背景**（旧厂街鱼市 / 派出所 / 白金瀚 / 大厦顶层 / 雨夜 / 审讯室 / 晨光屋顶），随地点与对话对象切换淡入，第三视角双人同框。
+| 时代过场 | 结局图鉴 | 人物好感 | 结局 |
+|---|---|---|---|
+| ![过场](_shots/09-网页版-时代过场.png) | ![图鉴](_shots/06-网页版-结局图鉴.png) | ![好感](_shots/07-网页版-人物好感.png) | ![结局](_shots/08-网页版-结局.png) |
 
-**图标**：《狂飙》海报风 —— 墨黑底 × 白色书法「狂飙」× 红色笔触飞溅，三端统一。
+**场景**：旧厂街鱼市 / 派出所走廊 / 白金瀚 / 大厦顶层 / 雨夜街道 / 审讯室 / 晨光天台 —— 7 张照片级背景，随地点切换淡入，并叠加胶片颗粒、暗角与电影调色。
+
+**图标**：暗底暖金鲤鱼（旧厂街鱼摊意象），三端统一；小到 32px 仍清晰可辨。
 
 ## 🎮 玩法（V2）
 
@@ -38,29 +49,20 @@
 - **🃏 谋略卡**：研读《孙子兵法》习得六张卡（瞒天过海/借刀杀人/反客为主/金蝉脱壳/以逸待劳/远交近攻），在六个关键剧情打出隐藏选项
 - **👥 人物好感**：安欣/启盛/启兰/大嫂/老默/黄瑶六人好感面板，≥70 解锁专属隐藏选项
 - **🏆 成就系统**：13 枚成就 · **9 种结局** · S/A/B/C 评级 · 三页图鉴（结局 / 成就 / 谋略）
-- **📱 安卓专属**：**长按选项可拖动选择**（Apple 式手感：长按 0.17s 进入拖拽态、触感反馈、拖动高亮、松手即选中）
+- **📱 全平台长按拖拽**：长按选项约 0.17 秒进入拖拽选择（Apple 式手感：拖动时目标项高亮、触感反馈、松手即选中）——三端通用
 
-![对话与抉择](_shots/gao-3-choice.png)
+## 📱 安卓专属优化
 
-## 🌊 风浪回合 · 🃏 谋略卡
-
-| 风浪回合 | 谋略卡隐藏选项 |
-|---|---|
-| ![风浪回合](_shots/gao-8-wave.png) | ![谋略卡](_shots/gao-9-card.png) |
-
-## 👥 人物好感 · 🏆 成就
-
-| 好感面板 | 成就页 |
-|---|---|
-| ![好感面板](_shots/gao-10-aff.png) | ![成就页](_shots/gao-11-ach.png) |
-
-## 📱 安卓版
-
-| 标题 | 对话与场景 | 选项卡 |
+| 长按拖拽选择 | 人物好感 | 时代过场 |
 |---|---|---|
-| ![安卓标题](_shots/gao-a-1-title.png) | ![安卓对话](_shots/gao-a-2-dialog.png) | ![安卓选项](_shots/gao-a-3-choice.png) |
+| ![拖拽](_shots/12-安卓-长按拖拽选择.png) | ![好感](_shots/14-安卓-人物好感.png) | ![过场](_shots/16-安卓-时代过场.png) |
 
-更多界面：[结局](_shots/gao-6-ending.png) · [章节过场](_shots/gao-4-era.png) · [结局图鉴](_shots/gao-7-gallery.png) · [白金瀚](_shots/gao-5-ch2.png)
+- **底部悬浮导航**：状态 / 谋略 / 图鉴，手机拇指可达
+- **关闭系统强制暗色**（`setAlgorithmicDarkeningAllowed(false)` / `FORCE_DARK_OFF`）——否则 Android 10+ 会自动反色页面，把写实照片的调色毁掉
+- **背景改为独立 WebP 文件**按需加载，页面体积 1020 KB → 121 KB；APK 1065 KB → 813 KB
+- **开启 `setOffscreenPreRaster`** 预栅格化，滑动更稳
+- **弱机自动低特效档**：`navigator.hardwareConcurrency ≤ 4` 时关闭毛玻璃 / 颗粒动画 / Ken Burns 位移
+- **安全区适配**：原生层把状态栏 / 导航条高度注入 CSS 变量 `--sat` / `--sab`，顶栏不被刘海遮挡
 
 ## 🎬 题材说明
 
@@ -68,47 +70,66 @@
 
 ## 🛠️ 技术
 
-- 纯原生 **HTML/CSS/JS 单文件**，零外部依赖、零构建、离线可玩
+- 纯原生 **HTML/CSS/JS 单文件**（网页版），零外部依赖、零构建、离线可玩
 - **WebAudio** 实时合成全部音效（打字滴答 / 选择确认 / 风险告警 / 过场三连音），可一键静音
-- 场景背景为内联 **base64 写实绘画风图像**（浏览器 Canvas 绘画化处理：重采样笔触 + 色彩浓缩 + 暗角）
+- **写实背景**为 WebP（质量 78），7 场景 × 2 构图；颗粒层用 `transform` 动画走合成层，不触发重绘
 - **Android APK**：原生 WebView 外壳（`android/`），免 Gradle 构建链（aapt2 → javac → d8 → zipalign → apksigner），DOM Storage 持久化存档
-- 图标由 **Canvas 程序化绘制**（黑底 + 书法「狂飙」+ 红笔触），三端共用
+- **Windows 桌面版**：pywebview + PyInstaller onefile；页面经本地 HTTP 服务承载以保证 `localStorage` 可用（`about:blank` 下存档会失效）
 - `localStorage` 自动存档（受限上下文安全降级）+ 图鉴 / 成就 / 谋略进度持久化
 
 ## ✅ 质量验证
 
-- 内置 `window.__qa(n)` 剧情图自检：静态校验全部节点引用 + n 局随机选择模拟通关（含风浪回合）——实测 **600 局 100% 到达结局、0 错误**
-- APK 经 `apksigner verify` 签名校验 + `aapt2 dump badging` 清单校验
-- 桌面版 `--selftest` 验证 WebView2 环境引擎加载
-- 三端全界面浏览器实测截图（见 `_shots/`）
+- 内置 `window.__qa(n)` 剧情图自检：静态校验全部节点引用 + n 局随机选择模拟通关（含风浪回合）
+- **实测 600 局 × 3 端（网页 / PWA / APK 资源）100% 到达结局、0 错误**
+- **长按拖拽 7 项真机模拟测试全通过**（Playwright 驱动 Edge，iPhone 视口 390×844）
+- APK 经 `apksigner verify` 校验（v1+v2+v3 签名方案全部通过）+ `aapt2 dump badging` 清单校验
+- 桌面版 `--selftest` 验证引擎加载与 localStorage 可用性
+- 覆盖 1440 / 1920 宽桌面与 390 / 412 / 360 小屏的视口核对
 
 设计文档见 [fengqi-jiuchangjie-design.md](fengqi-jiuchangjie-design.md)。
 
 ## 📁 结构
 
 ```
-fengqi-jiuchangjie.html        # 网页版（吉卜力风格 + 立绘 + 写实场景，双击即玩）
-mobile/                        # 安卓 PWA 版（液态玻璃：index.html + manifest + SW + 图标）
-android/                       # 安卓 APK 工程（MainActivity.java + Manifest + res + assets + 构建脚本）
-fengqi_jiuchangjie.py          # Windows 桌面版启动器（pywebview 封装）
-fengqi.ico                     # 程序图标（狂飙海报风）
-fengqi-jiuchangjie-design.md   # 设计文档
-_shots/                        # 界面截图
+fengqi-jiuchangjie.html         # 网页版（单文件，背景 base64 内联，横版 1440w）
+mobile/                         # PWA：index.html + manifest + SW + img/*.webp（竖版 880w）
+android/                        # APK 工程：MainActivity.java + Manifest + res + assets
+_shots/                         # 三端界面截图 16 张
+_build/                         # 构建脚本（见下）
+_art/out/                       # 构建素材：背景 WebP + 各档图标
+fengqi_jiuchangjie.py           # 桌面版启动器
+FengqiJiuchangjie.spec          # PyInstaller 配置
+fengqi-jiuchangjie-design.md    # 设计文档
+fengqi.ico                      # 程序图标
 ```
 
 ## 🛠️ 从源码构建
 
-**Windows 桌面版**
+三端由**同一份母版**产出：`_build/theme.css`（唯一样式来源）+ 原游戏逻辑，
+经 `_build/build.py` 生成网页版（背景内联）与 PWA / APK（背景外链）两种形态。
+
 ```bash
+python _build/build.py            # 产出网页版 / PWA / APK 资源三份页面
+
 pip install pywebview pyinstaller
-python -m PyInstaller --onefile --windowed --name FengqiJiuchangjie --icon fengqi.ico \
-  --add-data "fengqi-jiuchangjie.html;." --collect-all webview fengqi_jiuchangjie.py
+python _build/build_desktop.py    # Windows EXE（自动在 ASCII 临时目录打包并 --selftest）
+
+python _build/build_apk.py        # Android APK（需 JDK 17 + Android SDK build-tools 34 / platform 34）
+
+python _build/package.py          # 打发布 zip
 ```
 
-**Android APK**（需 JDK 17 + Android SDK build-tools 34 / platform 34）
+验证脚本：
+
 ```bash
-cd android && build_apk.bat      # aapt2 → javac → d8 → zipalign → apksigner
+node _build/test_qa.js 600        # 剧情自检：三端各跑 600 局
+node _build/test_drag.js          # 长按拖拽 7 项交互断言
+node _build/shots_pw.js all       # 多视口截图
 ```
+（`test_*.js` / `shots_pw.js` 需 `NODE_PATH` 指向装有 `playwright-core` 的 node_modules）
+
+> 注：`aapt2` / `apksigner` 不支持非 ASCII 路径，构建脚本会自动把工程暂存到纯英文临时目录再打包。
+> `_build/base/fengqi-jiuchangjie.html` 是承载游戏逻辑的**替换母版**（v2.4 原版），请勿直接修改。
 
 ## License
 
