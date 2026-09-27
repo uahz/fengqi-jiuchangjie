@@ -86,6 +86,13 @@ button{font-family:var(--ui);cursor:pointer}
 .choice.cardOpt{background:#ecf4ef;border-color:rgba(124,185,168,.65)}
 .choice.cardOpt::before{content:"🃏";font-size:13px}
 
+/* ---------- Q版人物立绘 ---------- */
+#chibi{position:absolute;right:18px;bottom:100%;width:94px;margin-bottom:-32px;pointer-events:none;z-index:6;
+  opacity:0;transform:translateY(10px) scale(.86);transition:opacity .45s ease-out,transform .45s ease-out}
+#chibi.show{opacity:1;transform:translateY(0) scale(1)}
+#chibi svg{display:block;width:100%;filter:drop-shadow(0 5px 9px rgba(124,185,168,.4));animation:bob 3.4s ease-in-out infinite alternate}
+@keyframes bob{from{transform:translateY(0)}to{transform:translateY(-3px)}}
+
 /* ---------- 覆盖层 ---------- */
 .ovl{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;flex-direction:column;
   text-align:center;padding:24px;overflow:auto}
@@ -215,7 +222,7 @@ button{font-family:var(--ui);cursor:pointer}
   </div>
   <div id="bottom">
     <div id="choices"></div>
-    <div id="dlg"><div id="who"><span class="av" id="whoAv">🐟</span><span id="whoName">高启强</span></div>
+    <div id="dlg"><div id="chibi"></div><div id="who"><span class="av" id="whoAv">🐟</span><span id="whoName">高启强</span></div>
       <div id="txt"></div><div id="hint">点击继续 ▸</div></div>
   </div>
 </div>
@@ -292,6 +299,61 @@ const C={
   xz:{n:"徐忠",e:"📋",c:"#3e8e83"},
   me:{n:"旁白",e:"🎬",c:"#8a7a6a"}
 };
+
+/* ================= Q版人物立绘（内联 SVG，随说话人切换） ================= */
+var CHIBI_SKIN="#ffdfc2",CHIBI_INK="#3a3226";
+function chb(o){return '<svg viewBox="0 0 100 112" xmlns="http://www.w3.org/2000/svg">'
+ +'<ellipse cx="50" cy="107" rx="18" ry="4" fill="rgba(124,185,168,.4)"/>'
+ +'<ellipse cx="42.5" cy="100" rx="6.5" ry="3.4" fill="#5a4a3a"/><ellipse cx="57.5" cy="100" rx="6.5" ry="3.4" fill="#5a4a3a"/>'
+ +(o.back||"")
+ +'<path d="M34 66 h32 q7 0 7 8 v19 q0 5 -5 5 h-36 q-5 0 -5 -5 v-19 q0 -8 7 -8 z" fill="'+o.oc+'" stroke="rgba(90,74,58,.28)" stroke-width="1"/>'
+ +(o.body||"")
+ +'<path d="M35 70 q-6 6 -4 13" stroke="'+(o.sl||o.oc)+'" stroke-width="5" fill="none" stroke-linecap="round"/>'
+ +'<path d="M65 70 q6 6 4 13" stroke="'+(o.sl||o.oc)+'" stroke-width="5" fill="none" stroke-linecap="round"/>'
+ +'<circle cx="31" cy="85" r="3" fill="'+(o.skin||CHIBI_SKIN)+'"/><circle cx="69" cy="85" r="3" fill="'+(o.skin||CHIBI_SKIN)+'"/>'
+ +'<circle cx="50" cy="34" r="21" fill="'+(o.skin||CHIBI_SKIN)+'"/>'
+ +o.hair
+ +'<circle cx="43" cy="36" r="2.3" fill="'+CHIBI_INK+'"/><circle cx="57" cy="36" r="2.3" fill="'+CHIBI_INK+'"/>'
+ +'<circle cx="38" cy="41" r="3" fill="#f6b4a0" opacity=".55"/><circle cx="62" cy="41" r="3" fill="#f6b4a0" opacity=".55"/>'
+ +'<path d="M46.5 43 q3.5 3 7 0" stroke="'+CHIBI_INK+'" stroke-width="1.5" fill="none" stroke-linecap="round"/>'
+ +(o.acc||"")
+ +(o.top||"")
+ +'</svg>';}
+function hcap(c){return '<path d="M29 34 a21 21 0 0 1 42 0 v4 q-8 -7 -21 -7 t-21 7 z" fill="'+c+'"/>';}
+function hside(c){return '<path d="M29 34 a21 21 0 0 1 42 0 v3 q-9 -8 -20 -6 q-13 2 -18 9 z" fill="'+c+'"/><path d="M28 33 q0 9 4 13 l2 -3 q-4 -4 -3 -10 z" fill="'+c+'"/>';}
+function hspiky(c){return '<path d="M30 35 l4 -8 4 6 4 -8 4 6 4 -8 4 6 4 -8 4 6 4 -6 a21 21 0 0 0 -40 -2 z" fill="'+c+'"/>';}
+function hslick(c){return '<path d="M29 32 a21 21 0 0 1 42 0 v3 q-21 -13 -42 0 z" fill="'+c+'"/>';}
+var FISH='<g transform="translate(66,80) rotate(-12)"><ellipse rx="8" ry="4.6" fill="#9ccfd8"/><path d="M6.5 0 l7 -4.2 v8.4 z" fill="#9ccfd8"/><circle cx="-4" cy="-1" r="1" fill="#3a3226"/></g>';
+var GLASSES='<g stroke="#3a3226" stroke-width="1.6" fill="rgba(255,255,255,.25)"><circle cx="43" cy="36" r="5.6"/><circle cx="57" cy="36" r="5.6"/><path d="M48.6 36 h2.8" fill="none"/><path d="M37.4 34.5 l-7 -1.6" fill="none"/><path d="M62.6 34.5 l7 -1.6" fill="none"/></g>';
+var CIGAR='<g transform="translate(63,47) rotate(-14)"><rect width="13" height="3.6" rx="1.8" fill="#e8d9b8"/><rect x="11" width="3.4" height="3.6" rx="1.4" fill="#d97a5a"/><path d="M16.5 -1.5 q3.4 -3 1.6 -6.6" stroke="#b9ab97" stroke-width="1.4" fill="none" stroke-linecap="round"/></g>';
+var CLEAVER='<g transform="translate(66,76) rotate(24)"><rect x="-1.5" y="-1.4" width="13" height="3.2" rx="1.4" fill="#8a7a6a"/><rect x="-12" y="-6.5" width="11" height="11" rx="1.2" fill="#ccd2d9" stroke="#9aa5b1" stroke-width=".8"/></g>';
+var CANE='<path d="M78 98 q7 -22 2 -42 q-1 -7 -9 -8" stroke="#8a6a44" stroke-width="3.6" fill="none" stroke-linecap="round"/>';
+var THOUGHT='<g fill="#fdf7ea" stroke="#cbb98f" stroke-width="1.2"><circle cx="72" cy="10" r="5.4"/><circle cx="63" cy="18" r="3.2"/></g>';
+var CHIBI={
+ qiang:chb({hair:hcap("#2e2a26"),oc:"#a04440",body:'<path d="M50 66 l-6 7 6 14 6 -14 z" fill="#f4e4bc"/>',acc:FISH}),
+ qin:chb({hair:hcap("#2e2a26"),oc:"#a04440",acc:THOUGHT}),
+ an:chb({hair:hcap("#2e2a26"),oc:"#4e7d99",acc:'<path d="M27 29 a23 21 0 0 1 46 0 l0 3 h-46 z" fill="#4e7d99"/><rect x="26" y="30" width="48" height="5.4" rx="2.7" fill="#3f6a83"/><circle cx="50" cy="32.6" r="2.7" fill="#e8c07a"/><path d="M38 25 h24" stroke="#3f6a83" stroke-width="1.6"/><rect x="44" y="68" width="12" height="8" rx="1.6" fill="#e8c07a"/><path d="M47 71 l3 3 3 -5" stroke="#3f6a83" stroke-width="1.4" fill="none"/>'}),
+ sheng:chb({hair:hside("#2e2a26"),oc:"#7d68a3",acc:GLASSES+'<g transform="translate(63,72)"><rect width="10" height="15" rx="2" fill="#3a3226"/><rect x="1.6" y="2" width="6.8" height="10" fill="#9ccfd8"/></g>'}),
+ lan:chb({hair:'<ellipse cx="74" cy="44" rx="7" ry="14" fill="#4a3c30"/>'+hcap("#4a3c30"),oc:"#f7f3ea",acc:'<path d="M43 66 q7 9 14 0" stroke="#6f7680" stroke-width="2" fill="none"/><circle cx="50" cy="69" r="2.4" fill="#6f7680"/><path d="M45 71 h10 M50 66 v10" stroke="#c38d94" stroke-width="1.6"/>'}),
+ sao:chb({back:'<path d="M27 32 q0 -23 23 -23 q23 0 23 23 l3 30 q-9 -7 -11 -16 q-5 5 -15 5 q-10 0 -15 -5 q-2 9 -11 16 z" fill="#4a3020"/>',hair:hcap("#4a3020"),oc:"#c38d94",body:'<path d="M31 66 q19 9 38 0 l1 9 q-20 8 -40 0 z" fill="#f4e4bc"/>',top:'<circle cx="29" cy="39" r="1.7" fill="#b8860b"/><circle cx="71" cy="39" r="1.7" fill="#b8860b"/>'}),
+ mo:chb({hair:hcap("#2e2a26"),oc:"#4a4f57",acc:'<path d="M28 29 a22 21 0 0 1 44 0 l5 2.6 q-27 -7 -54 0 z" fill="#6f7680"/>'+CLEAVER}),
+ xu:chb({hair:hslick("#2e2a26"),oc:"#b85c2e",body:'<path d="M42 66 l8 7 8 -7" stroke="#8a4a24" stroke-width="2.4" fill="none"/>',acc:GLASSES.replace(/rgba\(255,255,255,\.25\)/,"rgba(40,40,40,.55)").replace(/stroke="#3a3226"/,'stroke="#1e1c1a"')+CIGAR}),
+ tai:chb({hair:'<path d="M29 37 a21 21 0 0 1 11 -20 q-5 9 -5 20 z" fill="#b9ab97"/><path d="M71 37 a21 21 0 0 0 -11 -20 q5 9 5 20 z" fill="#b9ab97"/><path d="M40 15 q10 -4 20 0" stroke="#b9ab97" stroke-width="2" fill="none" opacity=".7"/>',oc:"#8a7148",acc:CANE+'<path d="M43 66 l7 6 7 -6" stroke="#6b5a3e" stroke-width="2.2" fill="none"/>'}),
+ xl:chb({hair:hslick("#1e1c1a"),oc:"#5f8f63",acc:CIGAR}),
+ xh:chb({hair:hspiky("#1e1c1a"),oc:"#5f8f63",body:'<path d="M36 74 h28" stroke="#4a7a4e" stroke-width="2" fill="none"/>',acc:CIGAR}),
+ zhao:chb({hair:hside("#4a4a4a"),oc:"#3f4146",body:'<path d="M42 66 l8 7 8 -7 l2 3 -10 12 -10 -12 z" fill="#f4e4bc"/><path d="M50 73 l3 3.4 -3 11 -3 -11 z" fill="#a34571"/>'}),
+ yao:chb({back:'<ellipse cx="30" cy="42" rx="7" ry="15" fill="#4a3020"/><ellipse cx="70" cy="42" rx="7" ry="15" fill="#4a3020"/>',hair:hcap("#4a3020")+'<circle cx="30" cy="27" r="3.6" fill="#e8a0b4"/><circle cx="70" cy="27" r="3.6" fill="#e8a0b4"/>',oc:"#d98ca4",acc:'<path d="M40 78 q10 7 20 0" stroke="#f4e4bc" stroke-width="3" fill="none"/>'}),
+ xz:chb({hair:hside("#2e2a26"),oc:"#f4efe4",sl:"#d8cbb0",acc:GLASSES+'<path d="M43 66 l7 7 7 -7" stroke="#4e7d99" stroke-width="2" fill="none"/><rect x="45.6" y="73" width="9" height="11" rx="1.6" fill="#fdf7ea" stroke="#4e7d99" stroke-width="1.2"/><path d="M47.5 76 h5" stroke="#4e7d99" stroke-width="1.2"/>'})
+};
+var chibiLast=null;
+function setChibi(who){
+ var el=$("chibi");if(!el)return;
+ var svg=CHIBI[who]||"";
+ if(who===chibiLast&&!!svg===!!el.dataset.on)return;
+ chibiLast=who;
+ if(!svg){el.className="";el.dataset.on="";el.innerHTML="";return;}
+ el.innerHTML=svg;el.dataset.on="1";el.className="show";
+}
 
 /* ================= V2：谋略卡 / 好感 / 成就 / 风浪回合 ================= */
 const CARDS={
@@ -761,6 +823,7 @@ function renderLines(s,i){
  const who=s.lines[i][0],txt=s.lines[i][1];
  const c=C[who]||C.me;
  $("whoAv").textContent=c.e;$("whoAv").style.borderColor=c.c;
+ setChibi(who);
  $("whoName").textContent=c.n;$("whoName").style.color=c.c;
  const tEl=$("txt");tEl.textContent="";$("hint").style.visibility="hidden";
  let p=0;clearInterval(typing);
