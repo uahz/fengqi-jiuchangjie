@@ -1,5 +1,5 @@
 /* 风起旧厂街 · Android PWA service worker（cache-first，离线可玩） */
-const CACHE = "gq-mobile-v2";
+const CACHE = "gq-mobile-v3";
 const ASSETS = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", (e) => {
