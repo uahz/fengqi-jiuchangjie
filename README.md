@@ -11,6 +11,12 @@
 
 也可以直接下载仓库中的 `fengqi-jiuchangjie.html`，双击即可游玩——零外部依赖，离线可玩。
 
+## ⬇️ 下载桌面版
+
+前往 [Releases](../../releases) 下载 `FengqiJiuchangjie.exe`（约 16 MB，免安装，双击即玩）。
+
+> 需 Windows 10/11（系统自带 WebView2 运行时）。自动存档位于 `%APPDATA%\FengqiJiuchangjie`。杀毒软件若对 PyInstaller 单文件报警，请添加信任。
+
 ## 🎮 玩法（V2）
 
 - **对话驱动**：40+ 剧情节点，四个时代（2000 旧厂街 → 2006 风起 → 2015 登顶 → 2021 潮退），打字机台词，点击/空格推进
@@ -49,10 +55,12 @@
 - **WebAudio** 实时合成全部音效（打字滴答 / 选择确认 / 风险告警 / 过场三连音），可一键静音
 - 场景背景为 CSS 渐变分层（鱼市晨雾 / 白金瀚红金 / 雨夜 / 铁栏），`prefers-reduced-motion` 全量降级
 - `localStorage` 自动存档、结局图鉴 / 成就 / 印记持久化
+- **Windows 桌面版**：`fengqi_jiuchangjie.py` 用 pywebview 封装（WebView2 内核），localStorage 持久化到 `%APPDATA%`
 
 ## ✅ 质量验证
 
 - 页面内置 `window.__qa(n)` 剧情图自检：静态遍历全部节点校验引用完整性，再模拟 n 局随机选择通关（含风浪回合随机经营）——实测 **600 局随机通关 100% 到达结局、0 错误**
+- 桌面版启动器内置 `--selftest`：验证 WebView2 环境下游戏引擎完整加载
 - 全界面浏览器实测截图验收（见 `_shots/`）
 
 设计文档见 [fengqi-jiuchangjie-design.md](fengqi-jiuchangjie-design.md)。
@@ -62,7 +70,15 @@
 ```
 fengqi-jiuchangjie.html        # 游戏本体（单文件，双击即玩）
 fengqi-jiuchangjie-design.md   # 设计文档（循环 / 数值 / 章节 / 结局 / V2 系统）
+fengqi_jiuchangjie.py          # Windows 桌面版启动器（pywebview 封装）
 _shots/                        # 界面截图
+```
+
+## 🛠️ 从源码构建桌面版
+
+```bash
+pip install pywebview pyinstaller
+python -m PyInstaller --onefile --windowed --name FengqiJiuchangjie --icon icon.ico --add-data "fengqi-jiuchangjie.html;." --collect-all webview fengqi_jiuchangjie.py
 ```
 
 ## License
