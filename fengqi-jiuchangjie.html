@@ -686,6 +686,10 @@ const KEY_SAVE="gq_save1",KEY_END="gq_endings";
 function fresh(){return JSON.parse(JSON.stringify(DEF));}
 function fmtMoney(v){return v>=10000?(v/10000).toFixed(v%10000?1:0)+" 万":String(v);}
 function clamp(v){return Math.max(0,Math.min(100,v));}
+/* localStorage 安全包装：受限上下文（如 webview 注入页）下不致脚本中断 */
+function LSget(k){try{return localStorage.getItem(k)}catch(e){return null}}
+function LSset(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+function LSdel(k){try{localStorage.removeItem(k)}catch(e){}}
 
 /* ================= 音效 ================= */
 let AC=null;
@@ -820,9 +824,9 @@ function showEnding(sc){
   '<span>💰 结算资金 '+fmtMoney(st.money)+'</span><span>🐟 声望 '+st.rep+'</span><span>🤝 人脉 '+st.con+
   '</span><span>⚠️ 风险 '+st.risk+'</span><span>❤️ 初心 '+st.heart+'</span><span>🏷 '+
   (Object.keys(st.set).map(k=>FLAG_NAMES[k]).filter(Boolean).join("、")||"无印记")+'</span>';
- $("ending").classList.add("show");sfxBig();localStorage.removeItem(KEY_SAVE);
+ $("ending").classList.add("show");sfxBig();LSdel(KEY_SAVE);
 }
-function unlockEnd(id){const o=JSON.parse(localStorage.getItem(KEY_END)||"{}");o[id]=1;localStorage.setItem(KEY_END,JSON.stringify(o));}
+function unlockEnd(id){const o=JSON.parse(LSget(KEY_END)||"{}");o[id]=1;LSset(KEY_END,JSON.stringify(o));}
 let gTab="end";
 function showGallery(tab){
  gTab=tab||"end";
@@ -832,7 +836,7 @@ function showGallery(tab){
  $("achWrap").style.display=gTab==="ach"?"":"none";
  $("cardWrap").style.display=gTab==="card"?"":"none";
  if(gTab==="end"){
-  const got=JSON.parse(localStorage.getItem(KEY_END)||"{}");
+  const got=JSON.parse(LSget(KEY_END)||"{}");
   const order=["tide","peak","newlife","chaos","run","burn","rain","gunshot","net"];
   const names={tide:"潮退",peak:"京海之王·梦醒",newlife:"回头是岸",chaos:"鱼死网破",run:"亡命南洋",burn:"灰烬",rain:"旧厂街的雨夜",gunshot:"白金瀚的枪声",net:"提前收网"};
   $("gGrid").innerHTML=order.map(id=>{
@@ -904,11 +908,11 @@ $("wSkip").onclick=()=>{if(!st||!st.wave)return;
 
 /* ================= V2 引擎：成就 ================= */
 const KEY_ACH="gq_ach";
-function achMap(){try{return JSON.parse(localStorage.getItem(KEY_ACH)||"{}")}catch(e){return{}}}
+function achMap(){try{return JSON.parse(LSget(KEY_ACH)||"{}")}catch(e){return{}}}
 function checkAch(){
  if(!st)return;const got=achMap();
  ACH.forEach(a=>{if(got[a.id])return;let ok=false;try{ok=a.c(st)}catch(e){}
-  if(ok){got[a.id]=1;localStorage.setItem(KEY_ACH,JSON.stringify(got));
+  if(ok){got[a.id]=1;LSset(KEY_ACH,JSON.stringify(got));
    st.achRun=(st.achRun||[]).concat(a.id);toast("🏆 成就解锁："+a.n);sfxBig();}});
 }
 
@@ -933,9 +937,9 @@ $("c_cards").onclick=()=>{if(st)openPanel("cards");};
 $("pClose").onclick=()=>$("panel").classList.remove("show");
 
 /* ================= 存档 / 流程 ================= */
-function saveGame(){st.node=curId;try{localStorage.setItem(KEY_SAVE,JSON.stringify(st));}catch(e){}}
+function saveGame(){st.node=curId;LSset(KEY_SAVE,JSON.stringify(st));}
 function startNew(){st=fresh();st.chap=1;$("title").classList.remove("show");$("ending").classList.remove("show");$("wave").classList.remove("show");$("panel").classList.remove("show");enter("c1_1");}
-function cont(){try{const s0=JSON.parse(localStorage.getItem(KEY_SAVE));const f=fresh();
+function cont(){try{const s0=JSON.parse(LSget(KEY_SAVE));const f=fresh();
  f.set=Object.assign(f.set,s0.set||{});f.aff=Object.assign(f.aff,s0.aff||{});f.cards=Object.assign(f.cards,s0.cards||{});
  st=Object.assign(f,s0);st.node=s0.node||"c1_1";
  $("title").classList.remove("show");enter(st.node);}catch(e){startNew();}}
@@ -947,7 +951,7 @@ $("btnGal2").onclick=showGallery;
 $("btnGalBack").onclick=()=>{$("gallery").classList.remove("show");if(!st)$("title").classList.add("show");};
 $("btnAgain").onclick=()=>{$("ending").classList.remove("show");startNew();};
 $("btnHome").onclick=()=>{$("ending").classList.remove("show");st=null;$("title").classList.add("show");};
-if(localStorage.getItem(KEY_SAVE))$("btnCont").style.display="";
+ if(LSget(KEY_SAVE))$("btnCont").style.display="";
 
 /* ================= 自检 ================= */
 window.__qa=function(n){
