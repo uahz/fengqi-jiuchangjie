@@ -7,56 +7,83 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowInsets;
+import android.view.WindowInsetsController;
 import android.view.WindowManager;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 /**
- * 风起旧厂街 · 高启强 —— 原生安卓外壳（v2.5 写实电影感版）
+ * 风起旧厂街 · 高启强 —— 原生安卓外壳
  *
- * 本次针对性优化：
- *  1. 关闭「强制暗色」(AlgorithmicDarkening / ForceDark) —— 否则 Android 10+ 会
- *     自动反色/压暗页面，把精心调色的写实背景照片毁掉，这是画质最关键的一项。
- *  2. 关闭滚动回弹、滚动条、长按选择与过度滚动发光，减少无效重绘。
- *  3. setOffscreenPreRaster —— 滚动时预栅格化，降低滑动掉帧。
- *  4. 背景色与网页主题一致 (#07090B)，配合 windowBackground 消除启动白闪。
- *  5. 把系统状态栏/导航条高度注入 CSS 变量 --sat / --sab，配合 viewport-fit=cover
- *     让 HUD 不被刘海/状态栏遮挡（原先 FLAG_LAYOUT_NO_LIMITS 会直接把顶栏压在状态栏下）。
- *  6. 页面从 index.html 改为相对路径加载 img/*.webp（背景图独立文件，
- *     不再一次性解析 ~1MB base64，首屏解析开销显著下降）。
+ * 关键能力：
+ *  1. 沉浸式状态栏/导航栏：全透明 + 边到边，把系统栏高度通过 JS 桥接给页面做安全区留白
+ *  2. 返回键分层处理：先让页面关闭弹层（图鉴/面板/风浪），页面没处理才退出应用
+ *  3. 主题联动：页面的日/夜模式可控制状态栏图标深浅（深色图标 / 浅色图标）
+ *  4. DOM Storage：存档、成就、图鉴持久化
  */
 public class MainActivity extends Activity {
 
-    private static final int BG = 0xFF07090B;
     private WebView web;
+    private int insetTop = 0;
+    private int insetBottom = 0;
+    private boolean dayMode = false;
 
-    @SuppressLint("SetJavaScriptEnabled")
+    public class Bridge {
+        /** 页面切换日/夜主题时调用，用于切换状态栏图标深浅 */
+        @JavascriptInterface
+        public void setTheme(final String mode) {
+            dayMode = "day".equals(mode);
+            runOnUiThread(new Runnable() {
+                public void run() { applyBarIcons(); }
+            });
+        }
+
+        /** 页面请求退出应用 */
+        @JavascriptInterface
+        public void exitApp() {
+            runOnUiThread(new Runnable() {
+                public void run() { finish(); }
+            });
+        }
+
+        /** 返回系统栏内边距（CSS 像素），页面可随时查询 */
+        @JavascriptInterface
+        public String insets() {
+            float d = getResources().getDisplayMetrics().density;
+            return "{\"top\":" + (int) (insetTop / d) + ",\"bottom\":" + (int) (insetBottom / d) + "}";
+        }
+    }
+
+    @SuppressLint({"SetJavaScriptEnabled", "AddJavascriptInterface"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // 沉浸式：内容延伸至状态栏/导航条之下，实际避让交给网页的 --sat/--sab
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(Color.TRANSPARENT);
-            getWindow().setNavigationBarColor(Color.TRANSPARENT);
+        Window w = getWindow();
+        // 边到边：系统栏全透明，内容可延伸至状态栏/导航栏之下
+        w.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        w.setStatusBarColor(Color.TRANSPARENT);
+        w.setNavigationBarColor(Color.TRANSPARENT);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            w.getAttributes().layoutInDisplayCutoutMode =
+                    WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+            w.setAttributes(w.getAttributes());
         }
-        // 状态栏图标用浅色（深色背景）
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            getWindow().getDecorView().setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+        if (Build.VERSION.SDK_INT >= 30) {
+            w.setDecorFitsSystemWindows(false);
+        } else {
+            w.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         }
 
         web = new WebView(this);
         web.setLayoutParams(new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        web.setBackgroundColor(BG);
+        web.setBackgroundColor(0xFF0B0B0F);
 
         WebSettings s = web.getSettings();
         s.setJavaScriptEnabled(true);
@@ -68,48 +95,26 @@ public class MainActivity extends Activity {
         s.setUseWideViewPort(true);
         s.setSupportZoom(false);
         s.setBuiltInZoomControls(false);
-        s.setDisplayZoomControls(false);
-        s.setMediaPlaybackRequiresUserGesture(false);
         s.setTextZoom(100);
-        s.setCacheMode(WebSettings.LOAD_DEFAULT);
-        s.setGeolocationEnabled(false);
-        s.setSaveFormData(false);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            s.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
-        }
-        // ★ 关键：禁止系统强制暗色，保住写实背景照片的原调色
-        try {
-            if (Build.VERSION.SDK_INT >= 33) {
-                s.setAlgorithmicDarkeningAllowed(false);   // API 33+
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                s.setForceDark(WebSettings.FORCE_DARK_OFF); // API 29-32
-            }
-        } catch (Throwable ignore) {
-        }
-        // ★ 预栅格化，滑动更稳（API 23+）
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            try {
-                s.setOffscreenPreRaster(true);
-            } catch (Throwable ignore) {
-            }
+            s.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         }
 
-        web.setWebViewClient(new WebViewClient() {
-            @Override
-            public void onPageFinished(WebView v, String url) {
-                injectSafeInsets();
-            }
-        });
+        web.setWebViewClient(new WebViewClient());
         web.setWebChromeClient(new WebChromeClient());
         web.setVerticalScrollBarEnabled(false);
         web.setHorizontalScrollBarEnabled(false);
         web.setOverScrollMode(View.OVER_SCROLL_NEVER);
-        web.setLongClickable(false);
-        web.setHapticFeedbackEnabled(true);        // 保留 navigator.vibrate / 长按触感
-        web.setOnLongClickListener(new View.OnLongClickListener() {   // 禁止系统长按文本选择菜单
+        web.addJavascriptInterface(new Bridge(), "FQNative");
+
+        // 监听系统栏变化（旋转、手势条切换等），把最新高度同步给页面
+        web.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
             @Override
-            public boolean onLongClick(View v) {
-                return true;
+            public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
+                insetTop = insets.getSystemWindowInsetTop();
+                insetBottom = insets.getSystemWindowInsetBottom();
+                pushInsetsToPage();
+                return insets;
             }
         });
 
@@ -117,52 +122,66 @@ public class MainActivity extends Activity {
         web.loadUrl("file:///android_asset/index.html");
     }
 
-    /** 把状态栏 / 导航条高度注入网页 CSS 变量，避免顶栏被刘海或状态栏遮挡 */
-    private void injectSafeInsets() {
+    /** 把安全区高度写进 CSS 变量，页面用 var(--sat)/var(--sab) 做留白 */
+    private void pushInsetsToPage() {
         if (web == null) return;
-        try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                WindowInsets wi = getWindow().getDecorView().getRootWindowInsets();
-                if (wi == null) return;
-                int top = wi.getSystemWindowInsetTop();
-                int bottom = wi.getSystemWindowInsetBottom();
-                final String js = "document.documentElement.style.setProperty('--sat','" + top + "px');"
-                        + "document.documentElement.style.setProperty('--sab','" + bottom + "px');"
-                        + "document.body && document.body.classList.add('in-app');";
-                web.evaluateJavascript(js, null);
+        float d = getResources().getDisplayMetrics().density;
+        final int top = (int) (insetTop / d);
+        final int bottom = (int) (insetBottom / d);
+        web.post(new Runnable() {
+            public void run() {
+                if (web == null) return;
+                web.evaluateJavascript(
+                        "document.documentElement.style.setProperty('--sat','" + top + "px');"
+                      + "document.documentElement.style.setProperty('--sab','" + bottom + "px');"
+                      + "window.dispatchEvent(new Event('fq-insets'));", null);
             }
-        } catch (Throwable ignore) {
+        });
+    }
+
+    /** 日间模式用深色状态栏图标，夜间模式用浅色图标 */
+    private void applyBarIcons() {
+        if (web == null) return;
+        if (Build.VERSION.SDK_INT >= 30) {
+            WindowInsetsController c = getWindow().getInsetsController();
+            if (c != null) {
+                c.setSystemBarsAppearance(
+                        dayMode ? WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS : 0,
+                        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS);
+            }
+        } else {
+            View dv = getWindow().getDecorView();
+            int flags = dv.getSystemUiVisibility();
+            if (dayMode) flags |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+            else flags &= ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+            dv.setSystemUiVisibility(flags);
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (web != null) {
-            web.onResume();
-            injectSafeInsets();
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        if (web != null) web.onPause();
-        super.onPause();
-    }
-
+    /**
+     * 返回键分层处理：
+     * 页面先关掉最上层弹层（图鉴 / 面板 / 风浪回合 / 结局页），
+     * 只有页面明确表示"无可关闭的内容"时，才真正退出应用。
+     */
     @Override
     public void onBackPressed() {
-        if (web != null && web.canGoBack()) {
-            web.goBack();
-        } else {
-            super.onBackPressed();
-        }
+        if (web == null) { super.onBackPressed(); return; }
+        web.evaluateJavascript(
+                "(function(){ try { return (window.__fqBack && window.__fqBack()) === true ? 'handled' : 'exit'; }"
+              + " catch(e) { return 'exit'; } })()",
+                new android.webkit.ValueCallback<String>() {
+                    @Override
+                    public void onReceiveValue(String value) {
+                        if (value == null || !value.contains("handled")) {
+                            finish();
+                        }
+                    }
+                });
     }
 
     @Override
     protected void onDestroy() {
         if (web != null) {
-            web.loadUrl("about:blank");
             web.destroy();
             web = null;
         }
